@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Chatbot - 100+ Questions Answered</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f1f1f1;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #a0a0ff;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            background: rgba(0, 219, 222, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 1px solid rgba(0, 219, 222, 0.3);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-header h2 {
+            color: #00dbde;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .clear-btn {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+        }
+
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(90deg, #4776E6, #8E54E9);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            border-left: 3px solid #00dbde;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 16px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #00dbde;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: linear-gradient(90deg, #4776E6, #8E54E9);
+            border: none;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .voice-btn {
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+        }
+
+        .question-categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .question-categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+
+        .category {
+            background: rgba(0, 219, 222, 0.1);
+            border: 1px solid rgba(0, 219, 222, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .category:hover {
+            background: rgba(0, 219, 222, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .category i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .questions-grid {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .question-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0ff;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .question-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #888;
+            font-size: 0.9rem;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> Smart Chatbot</h1>
+            <p class="tagline">100+ Questions Answered • Concise & Correct • No API Keys</p>
+            <div class="stats">
+                <i class="fas fa-check-circle"></i> 100+ Verified Answers
+            </div>
+        </header>
+        
+        <div class="chat-header">
+            <h2><i class="fas fa-comment-alt"></i> Ask Anything</h2>
+            <div class="controls">
+                <button class="clear-btn" id="clearBtn">
+                    <i class="fas fa-trash"></i> Clear Chat
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <p>Hello! I can answer <strong>100+ questions</strong> on various topics. Click any category below! 😊</p>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type your question here...">
+            <div class="action-buttons">
+                <button id="sendBtn"><i class="fas fa-paper-plane"></i> Send</button>
+                <button class="voice-btn" id="voiceBtn"><i class="fas fa-microphone"></i> Voice</button>
+            </div>
+        </div>
+        
+        <div class="question-categories">
+            <div class="category" onclick="showQuestions('programming')">
+                <i class="fas fa-code"></i> Programming
+            </div>
+            <div class="category" onclick="showQuestions('python')">
+                <i class="fab fa-python"></i> Python
+            </div>
+            <div class="category" onclick="showQuestions('web')">
+                <i class="fas fa-globe"></i> Web Dev
+            </div>
+            <div class="category" onclick="showQuestions('ai')">
+                <i class="fas fa-brain"></i> AI & ML
+            </div>
+            <div class="category" onclick="showQuestions('science')">
+                <i class="fas fa-flask"></i> Science
+            </div>
+            <div class="category" onclick="showQuestions('math')">
+                <i class="fas fa-calculator"></i> Math
+            </div>
+            <div class="category" onclick="showQuestions('general')">
+                <i class="fas fa-book"></i> General
+            </div>
+            <div class="category" onclick="showQuestions('tech')">
+                <i class="fas fa-microchip"></i> Technology
+            </div>
+        </div>
+        
+        <div id="questionsContainer" class="questions-grid">
+            <!-- Questions will appear here -->
+        </div>
+        
+        <footer>
+            <p>Smart Chatbot • 100+ Questions • Correct Answers • No API Keys • Works Offline</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const voiceBtn = document.getElementById('voiceBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const questionsContainer = document.getElementById('questionsContainer');
+
+        // EXTENSIVE KNOWLEDGE BASE - 100+ QUESTIONS
+        const knowledgeBase = {
+            // === PROGRAMMING ===
+            "what is programming": "Programming is writing instructions for computers to execute tasks.",
+            "what is an algorithm": "Algorithm is a step-by-step procedure to solve problems.",
+            "what is a variable": "Variable is a container for storing data values in programming.",
+            "what is a function": "Function is a reusable block of code that performs a specific task.",
+            "what is oop": "OOP (Object-Oriented Programming) organizes code around objects rather than functions.",
+            "what is inheritance": "Inheritance allows a class to acquire properties of another class.",
+            "what is polymorphism": "Polymorphism allows objects of different classes to be treated as objects of a common super class.",
+            "what is encapsulation": "Encapsulation is bundling data with methods that operate on that data.",
+            "what is an array": "Array is a data structure that stores multiple values in a single variable.",
+            "what is a loop": "Loop repeats a block of code until a condition is met.",
+            
+            // === PYTHON ===
+            "what is python": "Python is a high-level programming language known for its simplicity and readability.",
+            "what is pandas": "Pandas is a Python library for data manipulation and analysis.",
+            "what is numpy": "NumPy is a Python library for numerical computing with arrays.",
+            "what is matplotlib": "Matplotlib is a Python plotting library for creating visualizations.",
+            "what is django": "Django is a high-level Python web framework for rapid development.",
+            "what is flask": "Flask is a lightweight Python web framework.",
+            "what is a python list": "List is a Python data structure that stores ordered, mutable items.",
+            "what is a python tuple": "Tuple is an ordered, immutable Python data structure.",
+            "what is a python dictionary": "Dictionary stores key-value pairs in Python.",
+            "what is pip": "Pip is Python's package installer for installing libraries.",
+            
+            // === WEB DEVELOPMENT ===
+            "what is html": "HTML (HyperText Markup Language) structures web pages.",
+            "what is css": "CSS (Cascading Style Sheets) styles HTML elements.",
+            "what is javascript": "JavaScript makes web pages interactive and dynamic.",
+            "what is react": "React is a JavaScript library for building user interfaces.",
+            "what is node.js": "Node.js is a JavaScript runtime for server-side programming.",
+            "what is angular": "Angular is a TypeScript-based web application framework.",
+            "what is vue.js": "Vue.js is a progressive JavaScript framework for building UIs.",
+            "what is bootstrap": "Bootstrap is a CSS framework for responsive web design.",
+            "what is jquery": "jQuery is a JavaScript library simplifying HTML manipulation.",
+            "what is php": "PHP is a server-side scripting language for web development.",
+            
+            // === AI & MACHINE LEARNING ===
+            "what is ai": "AI (Artificial Intelligence) creates intelligent machines that mimic human behavior.",
+            "what is machine learning": "ML enables computers to learn from data without explicit programming.",
+            "what is deep learning": "Deep learning uses neural networks with many layers for complex tasks.",
+            "what is neural network": "Neural network is computing system inspired by biological neural networks.",
+            "what is tensorflow": "TensorFlow is an open-source ML framework by Google.",
+            "what is pytorch": "PyTorch is an open-source ML library developed by Facebook.",
+            "what is supervised learning": "Supervised learning uses labeled data to train models.",
+            "what is unsupervised learning": "Unsupervised learning finds patterns in unlabeled data.",
+            "what is reinforcement learning": "Reinforcement learning trains agents through rewards and penalties.",
+            "what is nlp": "NLP (Natural Language Processing) enables computers to understand human language.",
+            
+            // === SCIENCE ===
+            "what is gravity": "Gravity is the force that attracts objects with mass toward each other.",
+            "what is photosynthesis": "Photosynthesis is how plants convert sunlight into energy.",
+            "what is dna": "DNA carries genetic instructions for living organisms.",
+            "what is atom": "Atom is the basic unit of matter consisting of protons, neutrons, and electrons.",
+            "what is evolution": "Evolution is change in species characteristics over generations.",
+            "what is quantum physics": "Quantum physics studies matter and energy at atomic and subatomic levels.",
+            "what is global warming": "Global warming is Earth's rising surface temperature due to greenhouse gases.",
+            "what is solar system": "Solar system has Sun and orbiting planets, moons, asteroids, and comets.",
+            "what is black hole": "Black hole is space region with gravity so strong nothing escapes.",
+            "what is electricity": "Electricity is flow of electric charge through a conductor.",
+            
+            // === MATHEMATICS ===
+            "what is algebra": "Algebra uses symbols and letters to represent numbers and quantities.",
+            "what is calculus": "Calculus studies rates of change and accumulation of quantities.",
+            "what is geometry": "Geometry studies shapes, sizes, and properties of space.",
+            "what is trigonometry": "Trigonometry studies triangles and relationships between sides and angles.",
+            "what is statistics": "Statistics collects, analyzes, and interprets numerical data.",
+            "what is probability": "Probability measures likelihood of events occurring.",
+            "what is prime number": "Prime number is divisible only by 1 and itself.",
+            "what is pi": "Pi (π) is ratio of circle's circumference to its diameter (~3.14159).",
+            "what is fibonacci sequence": "Fibonacci sequence: each number is sum of two preceding ones.",
+            "what is pythagorean theorem": "Pythagorean theorem: a² + b² = c² in right triangle.",
+            
+            // === TECHNOLOGY ===
+            "what is blockchain": "Blockchain is decentralized, distributed ledger technology.",
+            "what is cryptocurrency": "Cryptocurrency is digital currency using cryptography for security.",
+            "what is bitcoin": "Bitcoin is the first decentralized cryptocurrency.",
+            "what is cloud computing": "Cloud computing delivers computing services over the internet.",
+            "what is iot": "IoT (Internet of Things) connects physical devices to the internet.",
+            "what is 5g": "5G is fifth generation wireless technology for faster internet.",
+            "what is vr": "VR (Virtual Reality) creates simulated environment for users.",
+            "what is ar": "AR (Augmented Reality) overlays digital information on real world.",
+            "what is big data": "Big data refers to extremely large datasets for analysis.",
+            "what is cybersecurity": "Cybersecurity protects systems and networks from digital attacks.",
+            
+            // === GENERAL KNOWLEDGE ===
+            "capital of france": "Paris is the capital of France.",
+            "capital of india": "New Delhi is the capital of India.",
+            "capital of usa": "Washington D.C. is the capital of USA.",
+            "capital of japan": "Tokyo is the capital of Japan.",
+            "who invented telephone": "Alexander Graham Bell invented the telephone.",
+            "who discovered penicillin": "Alexander Fleming discovered penicillin.",
+            "who discovered gravity": "Isaac Newton formulated laws of gravity.",
+            "what is un": "UN (United Nations) is international organization for peace.",
+            "what is wikipedia": "Wikipedia is free online encyclopedia created by users.",
+            "what is google": "Google is multinational technology company specializing in internet services.",
+            
+            // === COMPUTER SCIENCE ===
+            "what is operating system": "OS manages computer hardware and software resources.",
+            "what is linux": "Linux is open-source Unix-like operating system.",
+            "what is windows": "Windows is operating system developed by Microsoft.",
+            "what is macos": "macOS is operating system for Apple Macintosh computers.",
+            "what is database": "Database is organized collection of structured data.",
+            "what is sql": "SQL is programming language for managing relational databases.",
+            "what is nosql": "NoSQL databases store and retrieve data without tabular relations.",
+            "what is api": "API (Application Programming Interface) allows software interaction.",
+            "what is git": "Git is version control system for tracking code changes.",
+            "what is github": "GitHub is platform for version control and collaboration.",
+            
+            // === HEALTH ===
+            "what is covid-19": "COVID-19 is respiratory disease caused by SARS-CoV-2 virus.",
+            "what is vaccine": "Vaccine prepares immune system to fight specific diseases.",
+            "what is exercise": "Exercise improves physical fitness and overall health.",
+            "what is healthy diet": "Healthy diet includes fruits, vegetables, proteins, and whole grains.",
+            "what is meditation": "Meditation is practice for mindfulness and relaxation.",
+            
+            // === GREETINGS & BASICS ===
+            "hi": "Hello! I can answer 100+ questions on various topics. What would you like to know?",
+            "hello": "Hi there! Ask me about programming, science, technology, or general knowledge.",
+            "how are you": "I'm functioning perfectly! Ready to answer your questions.",
+            "what is your name": "I'm Smart Chatbot! I can answer 100+ different questions.",
+            "what can you do": "I can answer questions about programming, science, math, AI, and general knowledge.",
+            "thank you": "You're welcome! Feel free to ask more questions.",
+            "thanks": "My pleasure! Ask me anything else.",
+            
+            // === DEFAULT ===
+            "default": "I know answers to 100+ questions! Try asking about programming, science, math, AI, or general knowledge."
+        };
+
+        // Questions by category
+        const questionsByCategory = {
+            programming: [
+                "What is programming?",
+                "What is an algorithm?",
+                "What is a variable?",
+                "What is a function?",
+                "What is OOP?",
+                "What is inheritance?",
+                "What is polymorphism?",
+                "What is encapsulation?",
+                "What is an array?",
+                "What is a loop?"
+            ],
+            python: [
+                "What is Python?",
+                "What is pandas?",
+                "What is numpy?",
+                "What is matplotlib?",
+                "What is Django?",
+                "What is Flask?",
+                "What is a Python list?",
+                "What is a Python tuple?",
+                "What is a Python dictionary?",
+                "What is pip?"
+            ],
+            web: [
+                "What is HTML?",
+                "What is CSS?",
+                "What is JavaScript?",
+                "What is React?",
+                "What is Node.js?",
+                "What is Angular?",
+                "What is Vue.js?",
+                "What is Bootstrap?",
+                "What is jQuery?",
+                "What is PHP?"
+            ],
+            ai: [
+                "What is AI?",
+                "What is machine learning?",
+                "What is deep learning?",
+                "What is neural network?",
+                "What is TensorFlow?",
+                "What is PyTorch?",
+                "What is supervised learning?",
+                "What is unsupervised learning?",
+                "What is reinforcement learning?",
+                "What is NLP?"
+            ],
+            science: [
+                "What is gravity?",
+                "What is photosynthesis?",
+                "What is DNA?",
+                "What is atom?",
+                "What is evolution?",
+                "What is quantum physics?",
+                "What is global warming?",
+                "What is solar system?",
+                "What is black hole?",
+                "What is electricity?"
+            ],
+            math: [
+                "What is algebra?",
+                "What is calculus?",
+                "What is geometry?",
+                "What is trigonometry?",
+                "What is statistics?",
+                "What is probability?",
+                "What is prime number?",
+                "What is pi?",
+                "What is Fibonacci sequence?",
+                "What is Pythagorean theorem?"
+            ],
+            general: [
+                "Capital of France?",
+                "Capital of India?",
+                "Capital of USA?",
+                "Capital of Japan?",
+                "Who invented telephone?",
+                "Who discovered penicillin?",
+                "Who discovered gravity?",
+                "What is UN?",
+                "What is Wikipedia?",
+                "What is Google?"
+            ],
+            tech: [
+                "What is blockchain?",
+                "What is cryptocurrency?",
+                "What is Bitcoin?",
+                "What is cloud computing?",
+                "What is IoT?",
+                "What is 5G?",
+                "What is VR?",
+                "What is AR?",
+                "What is big data?",
+                "What is cybersecurity?"
+            ]
+        };
+
+        // Show questions for a category
+        function showQuestions(category) {
+            const questions = questionsByCategory[category];
+            questionsContainer.innerHTML = '';
+            questionsContainer.style.display = 'grid';
+            
+            questions.forEach(question => {
+                const btn = document.createElement('div');
+                btn.className = 'question-btn';
+                btn.textContent = question;
+                btn.onclick = () => askQuestion(question);
+                questionsContainer.appendChild(btn);
+            });
+        }
+
+        // Hide questions
+        function hideQuestions() {
+            questionsContainer.style.display = 'none';
+        }
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechSynthesis = window.speechSynthesis;
+        let recognition;
+        
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                processUserInput(transcript);
+            };
+        } else {
+            voiceBtn.disabled = true;
+            voiceBtn.innerHTML = '<i class="fas fa-microphone-slash"></i> Voice NA';
+        }
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            
+            if (sender === 'user') {
+                messageDiv.classList.add('user-message');
+            } else {
+                messageDiv.classList.add('bot-message');
+            }
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <p>${text}</p>
+                <div class="message-time">${time}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Find best response
+        function findBestResponse(question) {
+            const q = question.toLowerCase().trim().replace('?', '');
+            
+            // Direct match
+            if (knowledgeBase[q]) {
+                return knowledgeBase[q];
+            }
+            
+            // Remove "what is" for better matching
+            const cleanQ = q.replace('what is ', '');
+            if (knowledgeBase[cleanQ]) {
+                return knowledgeBase[cleanQ];
+            }
+            
+            // Check for keywords
+            const keywords = Object.keys(knowledgeBase);
+            for (const keyword of keywords) {
+                if (keyword.length > 3 && q.includes(keyword)) {
+                    return knowledgeBase[keyword];
+                }
+            }
+            
+            // Check for capital questions
+            if (q.startsWith('capital of ')) {
+                const country = q.replace('capital of ', '');
+                if (knowledgeBase['capital of ' + country]) {
+                    return knowledgeBase['capital of ' + country];
+                }
+            }
+            
+            // Check for "who" questions
+            if (q.startsWith('who ')) {
+                const action = q.replace('who ', '');
+                for (const key in knowledgeBase) {
+                    if (key.startsWith('who ') && key.includes(action)) {
+                        return knowledgeBase[key];
+                    }
+                }
+            }
+            
+            return knowledgeBase["default"];
+        }
+
+        // Process user input
+        function processUserInput(inputText) {
+            if (!inputText.trim()) return;
+            
+            // Hide questions when typing
+            hideQuestions();
+            
+            // Add user message
+            addMessage(inputText, "user");
+            
+            // Clear input
+            userInput.value = "";
+            
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('message', 'bot-message');
+            typingIndicator.id = 'typingIndicator';
+            typingIndicator.innerHTML = '<p><i>Thinking...</i></p>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Get response
+            setTimeout(() => {
+                const indicator = document.getElementById('typingIndicator');
+                if (indicator) indicator.remove();
+                
+                const response = findBestResponse(inputText);
+                addMessage(response, "bot");
+                
+                // Speak response
+                if (SpeechSynthesis) {
+                    SpeechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(response);
+                    utterance.rate = 1.0;
+                    SpeechSynthesis.speak(utterance);
+                }
+            }, 500);
+        }
+
+        // Ask question from button
+        function askQuestion(question) {
+            userInput.value = question;
+            processUserInput(question);
+            hideQuestions();
+        }
+
+        // Clear chat function
+        function clearChat() {
+            chatMessages.innerHTML = `
+                <div class="message bot-message">
+                    <p>Chat cleared. I can answer 100+ questions! Click any category above. 😊</p>
+                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            hideQuestions();
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener('click', () => {
+            processUserInput(userInput.value);
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                processUserInput(userInput.value);
+            }
+        });
+
+        voiceBtn.addEventListener('click', () => {
+            if (recognition) {
+                recognition.start();
+                voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> Listening...';
+                setTimeout(() => {
+                    voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> Voice';
+                }, 2000);
+            }
+        });
+
+        clearBtn.addEventListener('click', clearChat);
+
+        // Click outside to hide questions
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.category') && !e.target.closest('.questions-grid')) {
+                hideQuestions();
+            }
+        });
+
+        // Initialize with some sample questions
+        window.addEventListener('DOMContentLoaded', () => {
+            // Show some popular questions initially
+            setTimeout(() => {
+                showQuestions('programming');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
